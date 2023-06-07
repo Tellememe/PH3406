@@ -1,0 +1,17 @@
+import qutip as qt
+import numpy as np
+import matplotlib.pyplot as plt
+from qutip import Bloch, basis 
+ 
+# Create a Bloch sphere 
+b = qt.Bloch() 
+ 
+# Define the state vector |1> 
+state = qt.basis(2, 1) 
+ 
+# Add the state vector to the Bloch sphere 
+b.add_states(state) 
+ 
+# Show the Bloch sphere 
+b.show()
+plt.show(block=True)
