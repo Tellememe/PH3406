@@ -1,0 +1,21 @@
+import qutip as qt
+import numpy as np
+import matplotlib.pyplot as plt
+from qutip import Bloch, basis 
+ 
+# Create a Bloch sphere 
+b = qt.Bloch() 
+ 
+# Define the state vector |1> 
+state_1 = qt.basis(2, 0) 
+state_2 = qt.basis(2, 1)
+
+# Create superposition state
+psi = -(1/np.sqrt(2))*state_1 + (1/np.sqrt(2))*state_2
+
+# Add the state vector to the Bloch sphere 
+b.add_states(psi) 
+ 
+# Show the Bloch sphere 
+b.show()
+plt.show(block=True)
