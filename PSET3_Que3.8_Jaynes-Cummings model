@@ -1,0 +1,45 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from qutip import *
+import ipywidgets as widgets
+from IPython.display import display
+
+# Define constants
+kB = 1.38e-23  # Boltzmann constant in Joules/Kelvin
+h = 6.626e-34  # Planck's constant in Joules*seconds
+T = 300.0  # temperature in Kelvin
+f = 2.45e9  # frequency in Hz
+
+# Calculate mean photon number based on temperature and frequency
+n_th = 1/(np.exp(h*f/(kB*T)) - 1)
+
+# Define parameters
+g = 1.0  # coupling strength
+w = 1.0  # atom and field frequency
+r = 0.0  # decay rate
+t_values = np.linspace(0, 50, 500)  # t values
+
+def plot_inversion_vs_gt(N):
+    # Initial state: atom in excited state, field in a thermal state with mean photon number n_th
+    psi0 = tensor(ket2dm(basis(2, 1)), thermal_dm(N, n_th))
+
+    # Jaynes-Cummings Hamiltonian
+    H = w * (tensor(sigmaz(), identity(N)) + tensor(identity(2), destroy(N) * create(N))) / 2.0 + g * (tensor(sigmap(), destroy(N)) + tensor(sigmam(), create(N)))
+
+    # Solve the master equation
+    result = mesolve(H, psi0, t_values, [np.sqrt(r) * tensor(identity(2), destroy(N))], [tensor(sigmaz(), identity(N))])
+
+    # Plot inversion as a function of g*t
+    plt.figure(figsize=(8, 6))
+    plt.plot(g * t_values, result.expect[0])
+    plt.xlabel('gt', fontsize=14)
+    plt.ylabel('Inversion', fontsize=14)
+    plt.title('Jaynes-Cummings Model: Inversion vs. gt', fontsize=16)
+    plt.grid(True)
+    plt.show()
+
+# Create a slider for N
+N_slider = widgets.IntSlider(min=5, max=50, step=1, value=20, description='N: ')
+
+# Create interactive plot
+widgets.interact(plot_inversion_vs_gt, N=N_slider)
